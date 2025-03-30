@@ -26,8 +26,6 @@
 // be natives, it's necessary to include the core.
 //
 
-#include "sys-core.h"
-
 #include "tmp-mod-jpg.h"
 
 // These routines live in %u-jpg.c, which doesn't depend on %sys-core.h, but
@@ -41,15 +39,15 @@ extern void jpeg_load(char *buffer, int nbytes, char *output);
 //
 //  identify-jpeg?: native [
 //
-//  {Codec for identifying BINARY! data for a JPEG}
+//  "Codec for identifying BLOB! data for a JPEG"
 //
-//      return: [logic!]
-//      data [binary!]
+//      return: [logic?]
+//      data [blob!]
 //  ]
 //
-DECLARE_NATIVE(identify_jpeg_q)
+DECLARE_NATIVE(IDENTIFY_JPEG_Q)
 {
-    JPG_INCLUDE_PARAMS_OF_IDENTIFY_JPEG_Q;
+    INCLUDE_PARAMS_OF_IDENTIFY_JPEG_Q;
 
     // Handle JPEG error throw:
     if (setjmp(jpeg_state)) {
@@ -59,7 +57,7 @@ DECLARE_NATIVE(identify_jpeg_q)
     // !!! jpeg_info is not const-correct; we trust it not to modify data
     //
     Size size;
-    Byte* data = m_cast(Byte*, VAL_BINARY_SIZE_AT(&size, ARG(data)));
+    Byte* data = m_cast(Byte*, Cell_Bytes_At(&size, ARG(DATA)));
 
     int w, h;
     jpeg_info(s_cast(data), size, &w, &h); // may longjmp above
@@ -70,15 +68,15 @@ DECLARE_NATIVE(identify_jpeg_q)
 //
 //  decode-jpeg: native [
 //
-//  {Codec for decoding BINARY! data for a JPEG}
+//  "Codec for decoding BINARY! data for a JPEG"
 //
-//      return: [image!]
-//      data [binary!]
+//      return: [fundamental?]  ; image! not currently exposed
+//      data [blob!]
 //  ]
 //
-DECLARE_NATIVE(decode_jpeg)
+DECLARE_NATIVE(DECODE_JPEG)
 {
-    JPG_INCLUDE_PARAMS_OF_DECODE_JPEG;
+    INCLUDE_PARAMS_OF_DECODE_JPEG;
 
     // Handle JPEG error throw:
     if (setjmp(jpeg_state))
@@ -87,25 +85,25 @@ DECLARE_NATIVE(decode_jpeg)
     // !!! jpeg code is not const-correct, we trust it not to modify data
     //
     Size size;
-    Byte* data = m_cast(Byte*, VAL_BINARY_SIZE_AT(&size, ARG(data)));
+    Byte* data = m_cast(Byte*, Cell_Bytes_At(&size, ARG(DATA)));
 
     int w, h;
     jpeg_info(s_cast(data), size, &w, &h); // may longjmp above
 
-    char *image_bytes = rebAllocN(char, (w * h) * 4);  // RGBA is 4 bytes
+    char* image_bytes = rebAllocN(char, (w * h) * 4);  // RGBA is 4 bytes
 
     jpeg_load(s_cast(data), size, image_bytes);
 
-    REBVAL *binary = rebRepossess(image_bytes, (w * h) * 4);
+    RebolValue* blob = rebRepossess(image_bytes, (w * h) * 4);
 
-    REBVAL *image = rebValue(
-        "make image! compose [",
+    RebolValue* image = rebValue(
+        "make-image compose [",
             "(make pair! [", rebI(w), rebI(h), "])",
-            binary,
+            blob,
         "]"
     );
 
-    rebRelease(binary);
+    rebRelease(blob);
 
     return image;
 }

@@ -1,14 +1,19 @@
-REBOL []
+REBOL [
+    Name: JPG
+    Notes: "See %extensions/README.md for the format and fields of this file"
+]
 
-name: 'JPG
-source: %jpg/mod-jpg.c
+use-librebol: 'yes
+
+sources: %mod-jpg.c
+
 depends: [
     ;
     ; The JPG sources come from elsewhere; invasive maintenance for
     ; compiler rigor is not worthwhile to be out of sync with original.
     ;
     [
-        %jpg/u-jpg.c
+        %u-jpg.c
 
         <gnu:-Wno-unused-parameter> <msc:/wd4100>
 
@@ -25,7 +30,4 @@ depends: [
         ;
         <msc:/wd5045>  ; https://stackoverflow.com/q/50399940
     ]
-]
-includes: [
-    %prep/extensions/jpg
 ]

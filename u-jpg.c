@@ -15,7 +15,7 @@ extern void jpeg_info(char *buffer, int nbytes, int *w, int *h);
 extern void jpeg_load(char *buffer, int nbytes, char *output);
 
 
-#include "pstdint.h" // for uint32_t
+#include "stdint.h"  // for uint32_t
 
 
 /*
