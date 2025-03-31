@@ -28,8 +28,17 @@
 
 #include "tmp-mod-jpg.h"
 
-// These routines live in %u-jpg.c, which doesn't depend on %sys-core.h, but
-// has a minor dependency on %reb-c.h
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <assert.h>
+#include <stdlib.h>  // memcpy, etc.
+
+#include "c-enhanced.h"
+
+typedef unsigned char Byte;
+
+// These routines live in %u-jpg.c
 
 extern jmp_buf jpeg_state;
 extern void jpeg_info(char *buffer, int nbytes, int *w, int *h);
@@ -49,19 +58,21 @@ DECLARE_NATIVE(IDENTIFY_JPEG_Q)
 {
     INCLUDE_PARAMS_OF_IDENTIFY_JPEG_Q;
 
-    // Handle JPEG error throw:
-    if (setjmp(jpeg_state)) {
-        return Init_False(OUT);
-    }
-
     // !!! jpeg_info is not const-correct; we trust it not to modify data
     //
-    Size size;
-    Byte* data = m_cast(Byte*, Cell_Bytes_At(&size, ARG(DATA)));
+    size_t size;
+    Byte* data = m_cast(Byte*, rebLockBytes(&size, "data"));
+
+    if (setjmp(jpeg_state)) {  // Handle JPEG error throw
+        rebUnlockBytes(data);  // have to call before returning
+        return rebLogic(false);
+    }
 
     int w, h;
-    jpeg_info(s_cast(data), size, &w, &h); // may longjmp above
-    return Init_True(OUT);
+    jpeg_info(s_cast(data), size, &w, &h);  // may longjmp above
+    rebUnlockBytes(data);  // have to call before returning
+
+    return rebLogic(true);
 }
 
 
@@ -78,14 +89,14 @@ DECLARE_NATIVE(DECODE_JPEG)
 {
     INCLUDE_PARAMS_OF_DECODE_JPEG;
 
-    // Handle JPEG error throw:
-    if (setjmp(jpeg_state))
-        fail (Error_Bad_Media_Raw()); // generic
-
     // !!! jpeg code is not const-correct, we trust it not to modify data
     //
-    Size size;
-    Byte* data = m_cast(Byte*, Cell_Bytes_At(&size, ARG(DATA)));
+    size_t size;
+    Byte* data = m_cast(Byte*, rebLockBytes(&size, "data"));
+
+    // Handle JPEG error throw:
+    if (setjmp(jpeg_state))
+        return "fail -{JPEG decoding failure}-";  // auto-unlocks data on fail
 
     int w, h;
     jpeg_info(s_cast(data), size, &w, &h); // may longjmp above
@@ -93,6 +104,7 @@ DECLARE_NATIVE(DECODE_JPEG)
     char* image_bytes = rebAllocN(char, (w * h) * 4);  // RGBA is 4 bytes
 
     jpeg_load(s_cast(data), size, image_bytes);
+    rebUnlockBytes(data);  // have to call before returning
 
     RebolValue* blob = rebRepossess(image_bytes, (w * h) * 4);
 
