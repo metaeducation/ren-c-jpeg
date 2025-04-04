@@ -1,6 +1,6 @@
 //
 //  File: %mod-jpg.c
-//  Summary: "JPEG codec natives (dependent on %sys-core.h)"
+//  Summary: "JPEG codec natives"
 //  Section: Extension
 //  Project: "Rebol 3 Interpreter and Run-time (Ren-C branch)"
 //  Homepage: https://github.com/metaeducation/ren-c/
@@ -21,12 +21,6 @@
 //
 //=////////////////////////////////////////////////////////////////////////=//
 //
-// The original JPEG encoder and decoder did not include sys-core.h.   But
-// after getting rid of the REBCDI-based interface and converting codecs to
-// be natives, it's necessary to include the core.
-//
-
-#include "tmp-mod-jpg.h"
 
 #include <setjmp.h>
 #include <stdbool.h>
@@ -35,6 +29,9 @@
 #include <stdlib.h>  // memcpy, etc.
 
 #include "c-enhanced.h"
+
+#include "rebol.h"
+#include "tmp-mod-jpg.h"
 
 typedef unsigned char Byte;
 
@@ -109,7 +106,7 @@ DECLARE_NATIVE(DECODE_JPEG)
     RebolValue* blob = rebRepossess(image_bytes, (w * h) * 4);
 
     RebolValue* image = rebValue(
-        "make-image compose [",
+        "make image! compose [",
             "(make pair! [", rebI(w), rebI(h), "])",
             blob,
         "]"
