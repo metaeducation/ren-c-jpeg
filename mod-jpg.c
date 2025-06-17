@@ -93,7 +93,7 @@ DECLARE_NATIVE(DECODE_JPEG)
 
     // Handle JPEG error throw:
     if (setjmp(jpeg_state))
-        return "fail -{JPEG decoding failure}-";  // auto-unlocks data on fail
+        return "panic -[JPEG decoding failure]-";  // unlocks data on panic
 
     int w, h;
     jpeg_info(s_cast(data), size, &w, &h); // may longjmp above
