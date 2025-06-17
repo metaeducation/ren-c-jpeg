@@ -5,16 +5,14 @@ Rebol [
 
 use-librebol: 'yes
 
-sources: %mod-jpg.c
+sources: [mod-jpg.c]
 
 depends: [
     ;
     ; The JPG sources come from elsewhere; invasive maintenance for
     ; compiler rigor is not worthwhile to be out of sync with original.
     ;
-    [
-        %u-jpg.c
-
+    u-jpg.c [
         <gnu:-Wno-unused-parameter> <msc:/wd4100>
 
         <gnu:-Wno-shift-negative-value>
