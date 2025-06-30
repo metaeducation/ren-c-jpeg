@@ -13,7 +13,7 @@ depends: [
     ; compiler rigor is not worthwhile to be out of sync with original.
     ;
     u-jpg.c [
-        <gnu:-Wno-unused-parameter> <msc:/wd4100>
+        <gcc:-Wno-unused-parameter> <msc:/wd4100>
 
         <gnu:-Wno-shift-negative-value>
 
