@@ -29,7 +29,7 @@
 #include <stdlib.h>  // memcpy, etc.
 
 #include "needful/needful.h"
-#define cast  v_cast
+#define cast  h_cast
 
 #include "rebol.h"
 #include "tmp-mod-jpg.h"
