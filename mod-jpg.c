@@ -59,7 +59,7 @@ DECLARE_NATIVE(IDENTIFY_JPEG_Q)
     // !!! jpeg_info is not const-correct; we trust it not to modify data
     //
     size_t size;
-    Byte* data = m_cast(Byte*, rebLockBytes(&size, "data"));
+    Byte* data = rebLockMutableBytes(&size, "data");
 
     if (setjmp(jpeg_state)) {  // Handle JPEG error throw
         rebUnlockBytes(data);  // have to call before returning
@@ -90,7 +90,7 @@ DECLARE_NATIVE(DECODE_JPEG)
     // !!! jpeg code is not const-correct, we trust it not to modify data
     //
     size_t size;
-    Byte* data = m_cast(Byte*, rebLockBytes(&size, "data"));
+    Byte* data = rebLockMutableBytes(&size, "data");
 
     // Handle JPEG error throw:
     if (setjmp(jpeg_state))
