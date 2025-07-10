@@ -1,4 +1,4 @@
-; jpeg.test.reb
+; jpeg.test.r
 
 (image? decode 'jpeg read %../fixtures/rebol-logo.jpg)
 
