@@ -9,4 +9,4 @@ Rebol [
 sys.util/register-codec 'jpeg [%.jpg %jpeg]
     identify-jpeg?/
     decode-jpeg/
-    void  ; currently no JPG encoder
+    ^void  ; currently no JPG encoder
