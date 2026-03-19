@@ -48,7 +48,7 @@ extern void jpeg_load(char *buffer, int nbytes, char *output);
 //
 //  "Codec for identifying BLOB! data for a JPEG"
 //
-//      return: [logic?]
+//      return: [logic!]
 //      data [blob!]
 //  ]
 //
