@@ -44,7 +44,7 @@ extern void jpeg_load(char *buffer, int nbytes, char *output);
 
 
 //
-//  identify-jpeg?: native [
+//  /identify-jpeg?: native [
 //
 //  "Codec for identifying BLOB! data for a JPEG"
 //
@@ -75,7 +75,7 @@ DECLARE_NATIVE(IDENTIFY_JPEG_Q)
 
 
 //
-//  decode-jpeg: native [
+//  /decode-jpeg: native [
 //
 //  "Codec for decoding BINARY! data for a JPEG"
 //
