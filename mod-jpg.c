@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <stdlib.h>  // memcpy, etc.
 
-#include "needful/needful.h"
+#include "needful.h"
 #include "c-extras.h"  // for EXTERN_C, nullptr, etc.
 
 #include "rebol.h"
