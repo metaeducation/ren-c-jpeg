@@ -1,6 +1,6 @@
 # JPEG Decoder Extension
 
-This is a simple JPEG Decoder Extension for Ren-C.
+This is a simple JPEG Decoder Extension for Revolt.
 
 It depends on having the IMAGE! extension either built into the interpreter,
 or loaded dynamically.
